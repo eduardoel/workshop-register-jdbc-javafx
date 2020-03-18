@@ -31,7 +31,7 @@ public class MainViewController implements Initializable {
 
     @FXML //Method for handling menu events - Metodo para tratar os eventos do menu
     public void onMenuItemDepartmentAction() {
-        System.out.println("onMenuItemDepartmentAcrion");
+        loadView("/gui/DepartmentList.fxml");
     }
 
     @FXML //Method for handling menu events - Metodo para tratar os eventos do menu
