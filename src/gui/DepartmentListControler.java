@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
+import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -17,6 +18,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -38,6 +40,9 @@ public class DepartmentListControler implements Initializable, DataChangeListene
 
     @FXML
     private TableColumn<Department, String> tableColumnName;
+
+    @FXML
+    private TableColumn<Department, Department> tableColumnEDIT;
 
     @FXML
     private Button btNew;
@@ -79,6 +84,7 @@ public class DepartmentListControler implements Initializable, DataChangeListene
         List<Department> list = service.findAll();
         obsList = FXCollections.observableArrayList(list);
         tableViewDepartment.setItems(obsList);
+        initEditButtons();
     }
 
     private void createDialogForm(Department obj, String absoluteName, Stage parentStage) {
@@ -90,7 +96,7 @@ public class DepartmentListControler implements Initializable, DataChangeListene
             controller.setDepartment(obj);
             controller.setDepartmentService(new DepartmentService());
             controller.subscribeDataChangeListener(this);
-            controller.updateFormData(); 
+            controller.updateFormData();
 
             Stage dialogStage = new Stage();
             dialogStage.setTitle("Enter Department data");
@@ -107,5 +113,29 @@ public class DepartmentListControler implements Initializable, DataChangeListene
     @Override
     public void onDataChanged() {
         updateTableView();
+    }
+
+    /*
+    WILL ADD AN EDIT BUTTON ON EACH LINE OF THE TABLE AND THAT BUTTON WILL OPEN AN EDIT FORM
+    VAI ADICIONAR UM BOTÃO DE EDITAR EM CADA LINHA DA TABELA E ESSE BOTÃO VAI ABRIR UM FORMULARIO DE EDIÇÃO
+    */
+    private void initEditButtons() {
+        tableColumnEDIT.setCellValueFactory(param -> new ReadOnlyObjectWrapper<>(param.getValue()));
+        tableColumnEDIT.setCellFactory(param -> new TableCell<Department, Department>() {
+            private final Button button = new Button("edit");
+
+            @Override
+            protected void updateItem(Department obj, boolean empty) {
+                super.updateItem(obj, empty);
+                if (obj == null) {
+                    setGraphic(null);
+                    return;
+                }
+                setGraphic(button);
+                button.setOnAction(
+                        event -> createDialogForm(
+                                obj, "/gui/DepartmentForm.fxml", Utils.currentStage(event)));
+            }
+        });
     }
 }
