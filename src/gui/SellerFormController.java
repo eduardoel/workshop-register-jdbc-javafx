@@ -10,6 +10,7 @@ import gui.util.Constraints;
 import gui.util.Utils;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import javafx.event.ActionEvent;
@@ -19,6 +20,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.DatePicker;
 import model.entities.Seller;
 import model.exceptions.ValidationException;
 import model.services.SellerService;
@@ -38,7 +40,25 @@ public class SellerFormController implements Initializable {
     private TextField txtName;
 
     @FXML
+    private TextField txtEmail;
+
+    @FXML
+    private DatePicker dpBirthDate;
+
+    @FXML
+    private TextField txtBaseSalary;
+
+    @FXML
     private Label labelErrorName;
+
+    @FXML
+    private Label labelErrorEmail;
+
+    @FXML
+    private Label labelErrorBirthDate;
+
+    @FXML
+    private Label labelErrorBaseSalary;
 
     @FXML
     private Button btSave;
@@ -71,11 +91,9 @@ public class SellerFormController implements Initializable {
             service.saveOrUpdate(entity);
             notifyDataChangeListeners();
             Utils.currentStage(event).close(); //CLOSE THE WINDOW AFTER COMPLETING THE FUNCTION - FECHA A JANELA APOS CONCLUIR A FUNÇÃO
-        }
-        catch (ValidationException e) {
+        } catch (ValidationException e) {
             setErrorMessages(e.getErrors());
-        }
-        catch (DbException e) {
+        } catch (DbException e) {
             Alerts.showAlert("Error saving object", null, e.getMessage(), AlertType.ERROR);
         }
     }
@@ -111,7 +129,10 @@ public class SellerFormController implements Initializable {
 
     private void initializeNodes() {
         Constraints.setTextFieldInteger(txtId);
-        Constraints.setTextFieldMaxLength(txtName, 30);
+        Constraints.setTextFieldMaxLength(txtName, 70);
+        Constraints.setTextFieldDouble(txtBaseSalary);
+        Constraints.setTextFieldMaxLength(txtEmail, 60);
+        Utils.formatDatePicker(dpBirthDate, "dd/MM/yyyy");
     }
 
     //WILL TAKE THE FORM DATA AND RETURN A NEW (OBJ) - VAI PEGAR OS DADOS DO FORMULARIO E RETORNA UM NOVO (OBJ)
@@ -121,6 +142,14 @@ public class SellerFormController implements Initializable {
         }
         txtId.setText(String.valueOf(entity.getId()));
         txtName.setText(entity.getName());
+        txtEmail.setText(entity.getEmail());
+        Locale.setDefault(Locale.US);
+        txtBaseSalary.setText(String.format("%.2f", entity.getBaseSalary()));
+        /*
+        if (entity.getBirthDate() != null) {
+            dpBirthDate.setValue(LocalDate.ofInstant(entity.getBirthDate().toInstant(), ZoneId.systemDefault()));
+	}
+         */
     }
 
     private void notifyDataChangeListeners() {
