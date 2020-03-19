@@ -160,8 +160,7 @@ public class SellerListControler implements Initializable, DataChangeListener {
                 }
                 setGraphic(button);
                 button.setOnAction(
-                        event -> createDialogForm(
-                                obj, "/gui/SellerForm.fxml", Utils.currentStage(event)));
+                        event -> createDialogForm(obj, "/gui/SellerForm.fxml", Utils.currentStage(event)));
             }
         });
     }
