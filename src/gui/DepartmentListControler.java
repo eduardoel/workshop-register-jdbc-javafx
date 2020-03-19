@@ -113,6 +113,7 @@ public class DepartmentListControler implements Initializable, DataChangeListene
             dialogStage.initModality(Modality.WINDOW_MODAL);
             dialogStage.showAndWait();
         } catch (IOException e) {
+            e.printStackTrace();
             Alerts.showAlert("IO Exception", "Error loading view", e.getMessage(), AlertType.ERROR);
         }
     }
@@ -163,19 +164,18 @@ public class DepartmentListControler implements Initializable, DataChangeListene
             }
         });
     }
-    
+
     private void removeEntity(Department obj) {
         Optional<ButtonType> result = Alerts.showConfirmation("Confirmation - confirmação", "Are you sure to delete? - Você tem certeza que quer deletar?");
-        
+
         if (result.get() == ButtonType.OK) {
             if (service == null) {
                 throw new IllegalStateException("Service was null");
             }
             try {
-            service.remove(obj);
-            updateTableView();
-            }
-            catch(DbIntegrityExcepition e) {
+                service.remove(obj);
+                updateTableView();
+            } catch (DbIntegrityExcepition e) {
                 Alerts.showAlert("Error removing object - Error removing object", null, e.getMessage(), AlertType.ERROR);
             }
         }
